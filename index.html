@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="quizApp">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Kyro ORM Documentation</title>
+
+    <!-- Bootstrap -->
+    <link href="resources/css/bootstrap.min.css" rel="stylesheet">
+    <link href="resources/css/style.css" rel="stylesheet">
+
+</head>
+<body>
+
+<!-- Content -->
+<div class="mainWrapper">
+    <div class="page-header">
+        <h1>Kyro ORM Documentation</h1>
+    </div>
+
+    <div class="mainContent">
+        <p>
+        The first thing to remember, even this small project name ORM. It's not even deserve name  ORM. 
+        I'm give name ORM caused i don't know how to name except ORM. This project just make a stupid and simple
+        Object maker from an sql (JDBC) query result. I'm make this as i look some people strugle to make good query result to
+        Object converter. It's not everybody cases. But, i had look at people that assume it's mess/bad code, since i hard
+        to debug it. I make this project very simple. So if someone interesting to patch/update feature. Let me know.
+        </p>
+        
+        <div>
+            <p>Technology used :</p>
+            <ul class="list-group">
+                <li class="list-group-item">Java</li>
+                <li class="list-group-item">Mysql (For now, please fork if you want to update functionalities)</li>
+                
+            </ul>
+        </div>
+        
+        <h1>How it work</h1>
+        <p>
+            <p>
+                <img src="resources/img/Class Diagram2.jpg" alt="Class Diagram"></img>
+                <img src="resources/img/schema.png" alt="Schema Diagram"></img>
+            </p>
+            <p>Take a look of this simple UML class diagram and ERD Schema. So, let me explain this very simple (stupid maybe)
+                idea to convert an Query Result (JDBC) to a Class. 
+            </p>
+            <p>
+            The question are, how to get All Object of User and All Object of Quiz. 
+            Let's analyze this mysql query for retrieve that
+            </p>
+            <p>
+                <strong>Get All User object:</strong><br />
+                <pre>
+    SELECT user.id AS user_id,
+        user.email AS user_email,
+        user.firstName AS user_firstName,
+        user.isActive AS user_isActive,
+        user.lastName AS user_lastName,
+        user.username AS user_username,
+        user.userType AS user_userType 
+    FROM user
+                </pre>
+                You can see all fields are give alias with following rules: (table_name)_(field_name) 
+                <div>
+                    This rules, must be obey when if you use this library. The reason i use alias with this rules. Are to 
+                    guarantee the field name are unique, since using sql join will make field names duplicate. 
+                    It's important so the library can map the field correctly.
+                </div>
+                <strong>Get All Quiz object:</strong><br />
+                <pre>
+    SELECT quiz.id AS quiz_id,
+        quiz.name AS quiz_name,
+        quiz_category.id AS quiz_category_id,
+        quiz_category.name AS quiz_category_name 
+    FROM quiz 
+    LEFT JOIN quiz_category ON quiz.categoryId = quiz_category.id
+                </pre>
+                <div>
+                Ok now, Quiz object are had one to one relation with Quiz Category. So the mysql query must load all
+                fields of both entity. And using left join so it will linked. Now, you look why i must give rules of alias name.
+                The id and name field are duplicate. So i must give rules so it will unique.
+                </div>
+            </p>
+        </p>
+        <p>
+        So, the idea. Since the Query field are unique. I make a list of mapping class. 
+            <pre>
+                public FieldMapping(String propertyName,String fieldName,DataType dataType)...
+            </pre>
+            <pre>
+                e.g: new FieldMapping("id", "id", DataType.INTEGER)
+            </pre>
+            <div><strong>Property name</strong>, are the class property name</div>
+            <div><strong>Field name</strong>, are the field name in table</div>
+            <div><strong>Data Type</strong>, are enumerated type of property</div>
+        </p>
+        <p>
+        With this field mapping information. Every query can be map to class more easy. 
+        </p>
+        <p>
+        Let's get started
+        </p>
+    </div>
+</div>
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="resources/js/jquery.min.js"></script>
+<script src="resources/js/bootstrap.min.js"></script>
+
+</body>
+
+</html>
