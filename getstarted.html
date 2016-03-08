@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Fahrurrazi (evilkyro1965@yahoo.com)">
+    <meta name="description" 
+      content="Kyro ORM, a java and mysql orm"> 
+    <meta name="keywords" content="orm,java,mysql,object relational mapping,java orm,row data gateway,query to object">  
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Kyro ORM Documentation</title>
+
+    <!-- Bootstrap -->
+    <link href="resources/css/bootstrap.min.css" rel="stylesheet">
+    <link href="resources/css/style.css" rel="stylesheet">
+
+</head>
+<body>
+
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+
+        <div class="navbar-header">
+            <a class="navbar-brand" href="index.html">Kyro ORM</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li><a href="getstarted.html" target="_self">Get Started</a></li>
+                <li><a href="https://github.com/evilkyro1965/Kyro-ORM" target="_self">Source Code</a></li>
+            </ul>
+
+        </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+</nav>
+
+<!-- Content -->
+<div class="mainWrapper">
+    
+    <div class="page-header">
+        <h1>Get Started</h1>
+        <p>The complete example code please go to my github : <a href="https://github.com/evilkyro1965/Kyro-ORM">Source Code</a></p>
+    </div>
+
+    <div class="mainContent">
+        
+        <h1>Case Study</h1>
+        <p>
+            <p>
+                <img src="resources/img/Class Diagram2.jpg" alt="Class Diagram"></img>
+                <img src="resources/img/schema.png" alt="Schema Diagram"></img>
+            </p>
+            <p>So i will explain how to use the orm. To make more clear. I used this entities example</p>
+            <p>So, we must make a relation mapping, like this: </p>
+            <pre>
+public class QuizTables extends Tables {
+
+    private static final String userTableName = "user";
+    private static final String quizTableName = "quiz";
+    private static final String quizCategoryTableName = "quiz_category";
+
+    public Table userTable;
+    public Table quizCategoryTable;
+    public Table quizTable;
+
+    {
+        userTable = new Table(
+                userTableName,
+                "id",
+                new ArrayList<FieldMapping>(Arrays.asList(
+                        new FieldMapping("id", "id", DataType.INTEGER),
+                        new FieldMapping("email", "email", DataType.STRING),
+                        new FieldMapping("firstName", "firstName", DataType.STRING),
+                        new FieldMapping("isActive", "isActive", DataType.BOOLEAN),
+                        new FieldMapping("lastName", "lastName", DataType.STRING),
+                        new FieldMapping("username", "username", DataType.STRING),
+                        new FieldMapping("userType", "userType", DataType.STRING_ENUM)
+                ))
+        );
+
+        quizCategoryTable = new Table(
+                quizCategoryTableName,
+                "id",
+                new ArrayList<FieldMapping>(Arrays.asList(
+                        new FieldMapping("id", "id", DataType.INTEGER),
+                        new FieldMapping("name", "name", DataType.STRING)
+                ))
+        );
+
+        quizTable = new Table(
+                quizTableName,
+                "id",
+                new ArrayList<FieldMapping>(Arrays.asList(
+                        new FieldMapping("id", "id", DataType.INTEGER),
+                        new FieldMapping("name", "name", DataType.STRING),
+                        new FieldMapping("category", "categoryId", quizCategoryTable, DataType.OBJECT, QuizCategory.class)
+                ))
+        );
+
+        mappingMap.put(User.class,userTable);
+        mappingMap.put(QuizCategory.class,quizCategoryTable);
+        mappingMap.put(Quiz.class,quizTable);
+    }
+
+
+    public QuizTables() {
+    }
+
+}
+                
+            </pre>
+            <p>Let me explain the code, one by one : </p>
+            
+            <h1>Tables Class</h1>
+            <pre>
+public class QuizTables extends Tables                 
+            </pre>
+            <p>This class are main configuration. It will contain Class Table and Map<Class,Table> with name mapping</p>
+            <p>Class Table will contain fields and property mapping, and Map<Class,Table> will contain relationship between
+                an entity with table</p>
+            
+            <h1>Table Class</h1>
+            <pre>
+                
+    public Table userTable;
+
+    {
+        userTable = new Table(
+                userTableName,
+                "id",
+                new ArrayList<FieldMapping>(Arrays.asList(
+                        new FieldMapping("id", "id", DataType.INTEGER)...
+                ))
+        );                
+            </pre>
+            
+            <p>Create Table Class, with constructor that contain table name, table field of primary key, and 
+                list of field mapping
+            </p>
+            
+            <h1>Field Mapping</h1>
+            <pre>
+                new FieldMapping("id", "id", DataType.INTEGER)
+            </pre>
+            <p>Field mapping are contain property name,field name, and data type</p>
+            
+            <h1>Define Mapping</h1>
+            <pre>
+        mappingMap.put(User.class,userTable);
+        mappingMap.put(QuizCategory.class,quizCategoryTable);
+        mappingMap.put(Quiz.class,quizTable);
+            </pre>
+            <p>Handles class had variable mappingMap. To link a class with table variable.</p>
+            
+            <h1>Define Orm Class</h1>
+            <pre>
+        orm.setCon(con);
+        orm.setTables(new QuizTables());
+            </pre>
+            <p>Orm class must give JDBC Connection and Tables class</p>
+            
+            <h1>Generate Select Query and Get Class result</h1>
+            <pre>
+        String selectTableSQL = quizTables.getSelectQuery(Quiz.class);
+        PreparedStatement statement = orm.getCon().prepareStatement(selectTableSQL);
+
+        List<Quiz> quizes = orm.getQueryResult(statement,Quiz.class);
+        Quiz quiz = quizes.get(0);
+        assertEquals(1L,(long) quiz.getId());
+        assertEquals("Computer Basic 1",quiz.getName());
+            </pre>
+            <p>To generate sql query call tables.getSelectQuery(Quiz.class). This method will give
+                sql query that
+            </p>
+    </div>
+</div>
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="resources/js/jquery.min.js"></script>
+<script src="resources/js/bootstrap.min.js"></script>
+
+</body>
+
+</html>

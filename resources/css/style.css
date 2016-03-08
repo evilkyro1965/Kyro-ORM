@@ -71,7 +71,7 @@ body {
     clear: both;
 }
 
-.mainContent {
+.mainContent,.page-header {
     padding:20px;
 }
 
