@@ -1,4 +1,4 @@
-package com.kyrosoft.lib.service.orm;
+package com.kyrosoft.lib.service;
 
 /**
  * Created by Administrator on 3/5/2016.

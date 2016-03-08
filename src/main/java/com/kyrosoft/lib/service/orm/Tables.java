@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by Administrator on 3/7/2016.
+ * Orm Main Class
+ *
+ * @author : Fahrurrazi (evilkyro1965@yahoo.com)
  */
 public abstract class Tables {
 

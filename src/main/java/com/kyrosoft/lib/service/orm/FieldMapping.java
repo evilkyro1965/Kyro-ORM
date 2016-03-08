@@ -1,7 +1,9 @@
 package com.kyrosoft.lib.service.orm;
 
 /**
- * Created by Administrator on 3/5/2016.
+ * Orm Main Class
+ *
+ * @author : Fahrurrazi (evilkyro1965@yahoo.com)
  */
 public class FieldMapping {
 

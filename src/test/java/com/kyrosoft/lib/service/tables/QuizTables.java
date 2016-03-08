@@ -7,11 +7,9 @@ import com.kyrosoft.lib.service.orm.Tables;
 import com.kyrosoft.quizapp.entity.Quiz;
 import com.kyrosoft.quizapp.entity.QuizCategory;
 import com.kyrosoft.quizapp.entity.User;
-import com.kyrosoft.quizapp.entity.UserType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Map;
 
 /**
  * Created by Administrator on 3/5/2016.
